@@ -1,20 +1,23 @@
 <?php
-/**
- * @author ReRe Design studio
- * @email webmaster@rere-design.ru
- */
 
-class AuthModule extends CWebModule {
-    public function init()
-    {
-        YiiBase::setPathOfAlias('auth', YiiBase::getPathOfAlias('application.modules.auth'));
+YiiBase::setPathOfAlias('auth', dirname(__FILE__));
 
-        $imports = array(
-            'auth.models.*',
-            'auth.controllers.*',
-        );
-        $this->setImport($imports);
-        parent::init();
-    }
+class AuthModule extends CWebModule
+{
+	public $defaultController = 'auth';
+
+	public $controllerMap = array();
+
+	public $actions = array();
+
+	public function init()
+	{
+		$imports = array(
+			'auth.controllers.*',
+			'auth.actions.*',
+		);
+		$this->setImport($imports);
+		parent::init();
+	}
 
 }

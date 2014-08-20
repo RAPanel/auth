@@ -24,10 +24,7 @@
     <h1><?=$this->pageTitle?></h1>
 
     <h2>у меня уже есть
-        аккаунт <?=CHtml::link('войти', array('user/login', 'ajax' => $_GET['ajax']), array('class' => 'login'))?></h2>
-
-    <div
-        class="center"><?= CHtml::link('Войти через социальные сети', LoginzaModel::getLoginzaUrl(), array('class' => 'loginza')); ?></div>
+        аккаунт <?=CHtml::link('войти', array('site/login'), array('class' => 'login'))?></h2>
 
     <? //= $form->errorSummary($model) ?>
     <div class="form register">
@@ -74,27 +71,16 @@
             </div>
         </div>
 
-        <? $name = 'deal'; ?>
-        <div class="row rememberMe">
-            <?php echo $form->checkBox($model, $name, array('class' => 'styled')); ?>
-            <?php echo $form->labelEx($model, $name); ?>
-            <?php echo $form->error($model, $name); ?>
-        </div>
-
-        <? $name = 'verified'; ?>
+        <? $name = 'name'; ?>
         <div class="row">
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
-                <span class="verified"><?=$model->code?></span>
-                <?php echo $form->textField($model, $name, array('class' => 'mini')); ?>
+                <?php echo $form->textField($model, $name); ?>
                 <?php echo $form->error($model, $name); ?>
-                <div class="hint">введите сумму чисел</div>
             </div>
         </div>
 
         <div class="row button"><?= CHtml::submitButton('Регистрация', array('class' => 'green-button')); ?></div>
-
-        <?//= CHtml::Link('Авторизация', array('user/login')) ?>
     </div>
 
     <?php $this->endWidget(); ?>

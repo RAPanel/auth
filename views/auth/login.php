@@ -19,7 +19,7 @@ $form = $this->beginWidget('CActiveForm', array(
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
                 <?php echo $form->textField($model, $name); ?>
-                <?= CHtml::Link('я еще не зарегистрирован', array('user/register', 'ajax' => $_GET['ajax']), array('class' => 'register')) ?>
+                <?= CHtml::Link('я еще не зарегистрирован', array('site/register'), array('class' => 'register')) ?>
                 <div class="hint">например, mail@mail.ru</div>
             </div>
         </div>
@@ -29,7 +29,7 @@ $form = $this->beginWidget('CActiveForm', array(
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
                 <?php echo $form->passwordField($model, $name); ?>
-                <?= CHtml::Link('я не помню пароль', array('user/restore', 'ajax' => $_GET['ajax']), array('class' => 'restore-password')) ?>
+                <?= CHtml::Link('я не помню пароль', array('site/restore'), array('class' => 'restore-password')) ?>
                 <div class="hint">не менее 6 символов</div>
             </div>
         </div>
