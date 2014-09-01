@@ -12,17 +12,14 @@ class SiteRegisterAction extends CAction {
 
 		$model = new UserForm('register');
 
+		if(Yii::app()->user->isLoggedIn)
+			$this->controller->back($returnTo);
+
 		$this->controller->performAjaxValidation($model, 'register-form');
-		if ($this->controller->typicalSave($model, 1) && $model->login($model->password_repeat)) {
-			$this->controller->flash(Yii::t('auth', 'User success registered', array(
-				'{id}' => $model->id,
-				'{name}' => $model->username,
-				'{email}' => $model->email,
-				'{phone}' => $model->phone,
-				'{password}' => $model->password_repeat,
-				'{role}' => $model->role,
-			)));
-			$this->controller->refresh();
+		if (isset($_POST[get_class($model)])) {
+			$model->setAttributes($_POST[get_class($model)]);
+			if ($model->save() && $model->login($_POST['UserForm']['password']))
+				$this->controller->back($returnTo);
 		}
 
 		$this->controller->render($this->id, compact('model'));

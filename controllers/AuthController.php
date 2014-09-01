@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Rugalev
- * Date: 12.08.14
- * Time: 15:57
- */
 
 class AuthController extends RController
 {
