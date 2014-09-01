@@ -12,7 +12,7 @@ class SiteLoginAction extends CAction {
 
 		$model = new UserForm('login');
 
-		if(Yii::app()->user->isLoggedIn)
+		if(Yii::app()->user->id)
 			$this->controller->back($returnTo);
 		$this->controller->performAjaxValidation($model, 'login-form');
 		if (isset($_POST[get_class($model)])) {

@@ -12,7 +12,7 @@ class SiteRegisterAction extends CAction {
 
 		$model = new UserForm('register');
 
-		if(Yii::app()->user->isLoggedIn)
+		if(Yii::app()->user->id)
 			$this->controller->back($returnTo);
 
 		$this->controller->performAjaxValidation($model, 'register-form');

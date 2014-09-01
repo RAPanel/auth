@@ -1,24 +1,24 @@
 <?php
 
 /**
- * Class VkLoginAction
+ * Class FacebookLoginAction
  *
- * Docs: https://vk.com/dev/auth_sites
+ * Guide: http://www.designaesthetic.com/2012/03/02/create-facebook-login-oauth-php-sdk/
  *
  * @property $controller AuthController
  */
-class VkLoginAction extends CAction
+class FacebookLoginAction extends CAction
 {
 	public $appId;
 	public $secretKey;
 
-	const OAUTH_URL = 'https://oauth.vk.com/';
-	const API_URL = 'https://api.vk.com/';
+	const OAUTH_URL = 'https://www.facebook.com/dialog/oauth';
+	const API_URL = 'https://graph.facebook.com/';
 
 	public function run($code = null)
 	{
 		if(is_null($code))
-			$this->getVkCode();
+			$this->getFacebookCode();
 		else
 			$this->callback($code);
 	}
@@ -26,13 +26,14 @@ class VkLoginAction extends CAction
 	public function callback($code)
 	{
 		$authData = $this->getAuthData($code);
+		if($authData === false)
+			$this->controller->back();
 		$email = $authData['email'];
 		$user = User::model()->findByAttributes(array('email' => $email));
 		if(is_null($user)) {
 			$user = $this->registerUser($authData);
 		} else {
-			$userData = $this->getUserData($authData['user_id']);
-			$user->name = $userData['screen_name'];
+			$user->name = $authData['name'];
 			$user->apiToken = $authData['access_token'];
 			$user->saveSettings();
 		}
@@ -41,11 +42,10 @@ class VkLoginAction extends CAction
 	}
 
 	public function registerUser($authData) {
-		$userData = $this->getUserData($authData['user_id']);
 		$user = new UserForm('register');
 		$user->email = $authData['email'];
-		$user->name = $userData['screen_name'];
-		$user->username = $userData['first_name'] . ' ' . $userData['last_name'];
+		$user->name = $authData['id'];
+		$user->username = $authData['first_name'] . ' ' . $authData['last_name'];
 		$user->password = $user->password_repeat = md5($authData['access_token']);
 		$user->apiToken = $authData['access_token'];
 		$user->save(false);
@@ -62,9 +62,9 @@ class VkLoginAction extends CAction
 		return $url . (count($params) ? '?' . implode('&', $parts) : '');
 	}
 
-	public function getVkCode()
+	public function getFacebookCode()
 	{
-		$url = $this->renderUrl(self::OAUTH_URL . 'authorize', array(
+		$url = $this->renderUrl(self::OAUTH_URL, array(
 			'client_id' => $this->appId,
 			'redirect_uri' => $this->getRedirectUrl(),
 			'scope' => 'email',
@@ -79,10 +79,10 @@ class VkLoginAction extends CAction
 		return $this->controller->createAbsoluteUrl('/' . $this->controller->module->id . '/' . $this->controller->id . '/' . $this->id);
 	}
 
-	public function getUserData($vkUserId)
+	public function getUserData($facebookUserId)
 	{
-		$result = $this->getApiResult(self::API_URL . 'method/users.get', array(
-			'user_ids' => $vkUserId,
+		$result = $this->getApiResult(self::API_URL . 'me', array(
+			'user_ids' => $facebookUserId,
 			'client_secret' => $this->secretKey,
 			'fields' => 'screen_name',
 		));
@@ -91,26 +91,46 @@ class VkLoginAction extends CAction
 		return array();
 	}
 
-	public function getApiResult($url, $params = array()) {
+	public function getApiResult($url, $params = array(), $json = true) {
 		$url = $this->renderUrl($url, $params);
 		$data = @file_get_contents($url);
-		if (!$data)
-			return false;
-		try {
-			$jsonData = CJSON::decode($data);
-		} catch (Exception $e) {
+		if (!$data) {
 			return false;
 		}
+		if($json) {
+			try {
+				$jsonData = json_decode($data, true);
+			} catch (Exception $e) {
+				return false;
+			}
+		} else
+			return $data;
 		return $jsonData;
 	}
 
 	public function getAuthData($code)
 	{
-		return $this->getApiResult(self::OAUTH_URL . 'access_token', array(
+		$data = $this->getApiResult(self::API_URL . 'oauth/access_token', array(
 			'client_id' => $this->appId,
 			'client_secret' => $this->secretKey,
 			'code' => $code,
 			'redirect_uri' => $this->getRedirectUrl(),
+		), false);
+		if(!strlen($data))
+			return false;
+		$parts = explode("&", $data);
+		$accessData = array();
+		foreach($parts as $part) {
+			list($name, $value) = explode("=", $part);
+			$accessData[$name] = $value;
+		}
+		if(!isset($accessData['access_token']))
+			return false;
+		$data = $this->getApiResult(self::API_URL . 'me', array(
+			'client_id' => $this->appId,
+			'client_secret' => $this->secretKey,
+			'access_token' => $accessData['access_token'],
 		));
+		return CMap::mergeArray($accessData, $data);
 	}
 } 
