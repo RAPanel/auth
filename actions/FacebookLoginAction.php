@@ -32,8 +32,9 @@ class FacebookLoginAction extends CAction
 		Yii::app()->user->setState('facebookLoginState', false);
 		$accessToken = $this->getAccessToken($authCode);
 		$userData = $this->getUserData($accessToken);
+		$redirect = Yii::app()->user->getState('facebookRedirect');
 		if($userData === false)
-			$this->controller->back();
+			$this->controller->back($redirect);
 		$email = $userData['email'];
 		$user = User::model()->findByAttributes(array('email' => $email));
 		if(is_null($user)) {
@@ -46,7 +47,6 @@ class FacebookLoginAction extends CAction
 			$user->saveSettings();
 		}
 		$user->apiLogin(md5($accessToken));
-		$redirect = Yii::app()->user->getState('facebookRedirect');
 		Yii::app()->user->setState('facebookRedirect', false);
 		$this->controller->back($redirect);
 	}
@@ -105,7 +105,10 @@ class FacebookLoginAction extends CAction
 
 	public function getRedirectUrl()
 	{
-		return $this->controller->createAbsoluteUrl('/' . $this->controller->module->id . '/' . $this->controller->id . '/' . $this->id);
+		$urlParams = array();
+		if(isset($_GET['window']))
+			$urlParams['window'] = 1;
+		return $this->controller->createAbsoluteUrl('/' . $this->controller->module->id . '/' . $this->controller->id . '/' . $this->id, $urlParams);
 	}
 
 	public function getApiResult($url, $params = array(), $json = true) {

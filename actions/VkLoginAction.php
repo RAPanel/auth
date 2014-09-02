@@ -76,7 +76,10 @@ class VkLoginAction extends CAction
 
 	public function getRedirectUrl()
 	{
-		return $this->controller->createAbsoluteUrl('/' . $this->controller->module->id . '/' . $this->controller->id . '/' . $this->id);
+		$urlParams = array();
+		if(isset($_GET['window']))
+			$urlParams['window'] = 1;
+		return $this->controller->createAbsoluteUrl('/' . $this->controller->module->id . '/' . $this->controller->id . '/' . $this->id, $urlParams);
 	}
 
 	public function getUserData($vkUserId)
