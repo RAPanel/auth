@@ -12,22 +12,24 @@ class SiteRestoreAction extends CAction {
 
 		$model = new UserForm('restore');
 
+		if(isset($_POST[get_class($model)]) && Yii::app()->request->isAjaxRequest) {
+			echo CActiveForm::validate($model);
+			Yii::app()->end();
+		}
+
 		if (isset($_POST[get_class($model)])) {
 			$user = $model->find('email=:email', array('email' => $_POST[get_class($model)]['email']));
 			if (is_object($user)) {
-				$user->controller->restore();
-
-				$this->controller->flash('Новый пароль выслан на Ваш адрес');
-//                if (Yii::app()->request->isAjaxRequest) Yii::app()->end('1');
-				$this->controller->back($returnTo);
-
-			} else $model->addError('email', 'Пользователь с таким паролем не зарегистрирован в системе');
+				$user->restorePassword();
+			}
+			Yii::app()->user->setFlash('restored', 'Новый пароль выслан на Ваш адрес');
+			$this->controller->redirect(array('auth/login'));
 		}
 
 		if ($model->hasErrors() && Yii::app()->request->isAjaxRequest)
 			Yii::app()->end(json_encode($model->errors));
 
-		$this->controller->render($this->action->id, compact('model'));
+		$this->controller->render($this->id, compact('model'));
 	}
 
 }

@@ -24,7 +24,7 @@
     <h1><?=$this->pageTitle?></h1>
 
     <h2>у меня уже есть
-        аккаунт <?=CHtml::link('войти', array('site/login'), array('class' => 'login'))?></h2>
+        аккаунт <?=CHtml::link('войти', array('auth/login'), array('class' => 'login'))?></h2>
 
     <? //= $form->errorSummary($model) ?>
     <div class="form register">
