@@ -29,7 +29,7 @@ class SiteRestoreAction extends CAction {
 		if ($model->hasErrors() && Yii::app()->request->isAjaxRequest)
 			Yii::app()->end(json_encode($model->errors));
 
-		$this->controller->render($this->id, compact('model'));
+		$this->controller->renderActive($this->id, compact('model'));
 	}
 
 }

@@ -17,8 +17,8 @@
 
 <? else: ?>
     <?php $form = $this->beginWidget('CActiveForm', array(
-        'id' => 'user-form',
-        'enableAjaxValidation' => false,
+        'id' => 'register-form',
+        'enableAjaxValidation' => true,
     )); ?>
 
     <h1><?=$this->pageTitle?></h1>

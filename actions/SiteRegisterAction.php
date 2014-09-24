@@ -22,7 +22,7 @@ class SiteRegisterAction extends CAction {
 				$this->controller->back($returnTo);
 		}
 
-		$this->controller->render($this->id, compact('model'));
+		$this->controller->renderActive($this->id, compact('model'));
 	}
 
 }
