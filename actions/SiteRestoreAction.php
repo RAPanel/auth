@@ -3,7 +3,7 @@
 /**
  * Class SiteRestoreAction
  *
- * @property $controller AuthController
+ * @property AuthController $controller
  */
 class SiteRestoreAction extends CAction {
 

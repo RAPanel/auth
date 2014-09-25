@@ -3,7 +3,7 @@
 /**
  * Class SiteRegisterAction
  *
- * @property $controller AuthController
+ * @property AuthController $controller
  */
 class SiteRegisterAction extends CAction {
 

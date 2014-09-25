@@ -5,7 +5,7 @@
  *
  * Docs: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/v2.1
  *
- * @property $controller AuthController
+ * @property AuthController $controller
  */
 class FacebookLoginAction extends CAction
 {

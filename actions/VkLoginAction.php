@@ -5,7 +5,7 @@
  *
  * Docs: https://vk.com/dev/auth_sites
  *
- * @property $controller AuthController
+ * @property AuthController $controller
  */
 class VkLoginAction extends CAction
 {
