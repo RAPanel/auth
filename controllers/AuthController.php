@@ -14,7 +14,41 @@ class AuthController extends RController
 		'restore' => array(
 			'class' => 'auth.actions.SiteRestoreAction',
 		),
+		'password' => array(
+			'class' => 'auth.actions.PasswordAction',
+		),
 	);
+
+	public function filters()
+	{
+		return array(
+			'accessControl',
+		);
+	}
+
+	public function accessRules() {
+		$guestActions = array_intersect(array_keys($this->actions()), array('login', 'register', 'restore'));
+		$userActions = array_intersect(array_keys($this->actions()), array('logout', 'password'));
+		return array(
+			array('allow',
+				'actions' => $guestActions,
+				'roles' => array('guest'),
+			),
+			array('allow',
+				'actions' => $userActions,
+				'roles' => array('user'),
+			),
+			array('allow',
+				'actions' => array('logout'),
+				'roles' => array('user'),
+			),
+			array('deny',
+				'deniedCallback' => function () {
+					Yii::app()->controller->redirect(array('auth/login', 'returnTo' => Yii::app()->request->requestUri));
+				}
+			),
+		);
+	}
 
 	public function actions() {
 		return CMap::mergeArray($this->defaultActions, $this->getModule()->actions);

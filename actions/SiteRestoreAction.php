@@ -1,5 +1,6 @@
 <?php
 
+Yii::import('auth.models.RestoreForm');
 /**
  * Class SiteRestoreAction
  *
@@ -7,27 +8,29 @@
  */
 class SiteRestoreAction extends CAction {
 
-	public function run($returnTo = null) {
-		$this->controller->pageTitle = 'Востановление пароля';
+	public function run($returnTo = null, $token = null) {
+		$this->controller->pageTitle = 'Восстановление пароля';
 
-		$model = new UserForm('restore');
-
-		if(isset($_POST[get_class($model)]) && Yii::app()->request->isAjaxRequest) {
-			echo CActiveForm::validate($model);
-			Yii::app()->end();
+		if($token !== null) {
+			$identity = new RTokenUserIdentity($token);
+			$identity->authenticate();
+			if(Yii::app()->user->login($identity))
+				$this->controller->redirect(array('auth/password'));
+			else
+				$this->controller->redirect(array('auth/restore', $returnTo => $returnTo));
 		}
 
+		$model = new RestoreForm();
+
+		$this->controller->performAjaxValidation($model, 'restore-form');
 		if (isset($_POST[get_class($model)])) {
-			$user = $model->find('email=:email', array('email' => $_POST[get_class($model)]['email']));
-			if (is_object($user)) {
-				$user->restorePassword();
+			$model->setAttributes($_POST[get_class($model)]);
+			if($model->validate()) {
+				$model->restorePassword();
+				Yii::app()->user->setFlash('info', 'Ссылка для восстановления выслана на Ваш E-mail адрес');
+				$this->controller->redirect(array('auth/login'));
 			}
-			Yii::app()->user->setFlash('restored', 'Новый пароль выслан на Ваш адрес');
-			$this->controller->redirect(array('auth/login'));
 		}
-
-		if ($model->hasErrors() && Yii::app()->request->isAjaxRequest)
-			Yii::app()->end(json_encode($model->errors));
 
 		$this->controller->renderActive($this->id, compact('model'));
 	}
