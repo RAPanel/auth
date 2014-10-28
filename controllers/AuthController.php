@@ -27,8 +27,8 @@ class AuthController extends RController
 	}
 
 	public function accessRules() {
-		$guestActions = array_intersect(array_keys($this->actions()), array('login', 'register', 'restore'));
-		$userActions = array_intersect(array_keys($this->actions()), array('logout', 'password'));
+		$guestActions = array_unique(array_merge(array_keys($this->actions()), array('login', 'register', 'restore')));
+		$userActions = array_unique(array_merge(array_keys($this->actions()), array('logout', 'password')));
 		return array(
 			array('allow',
 				'actions' => $guestActions,

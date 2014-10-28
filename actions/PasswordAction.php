@@ -9,7 +9,7 @@
 Yii::import('auth.models.PasswordForm');
 class PasswordAction extends CAction {
 
-    public function run() {
+    public function run($returnTo = null) {
         $this->controller->pageTitle = "Изменить пароль";
         if(!Yii::app()->user->id)
             $this->controller->redirect(array('auth/login'));
@@ -20,8 +20,13 @@ class PasswordAction extends CAction {
             $model->setAttributes($_POST[get_class($model)]);
             if($model->validate()) {
                 $model->applyPassword();
-                Yii::app()->user->setFlash('info', 'Пароль успешно изменён');
-                $this->controller->redirect(array('/site/index'));
+                Yii::app()->user->setFlash('warning passwordChanged', 'Пароль успешно изменён');
+                if(Yii::app()->hasComponent('notification')) {
+                    Yii::app()->notification->replace('warning', "Ваш пароль был изменён (IP: {ip})", array('{ip}' => Yii::app()->request->userHostAddress));
+                }
+                if($returnTo === null)
+                    $returnTo = array('/site/index');
+                $this->controller->redirect($returnTo);
             }
         }
         $this->controller->render('password', compact('model'));
