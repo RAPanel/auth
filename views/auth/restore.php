@@ -19,7 +19,7 @@ $form = $this->beginWidget('CActiveForm', array(
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
                 <?php echo $form->textField($model, $name); ?>
-                <?= CHtml::Link('я еще не зарегистрирован', array('site/register'), array('class' => 'register')) ?>
+                <?= CHtml::link('я еще не зарегистрирован', array('site/register'), array('class' => 'register')) ?>
             </div>
         </div>
 
