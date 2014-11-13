@@ -1,49 +1,48 @@
 <?php
 /**
- * @var $model User
+ * @var User $model
+ * @var CActiveForm $form
  */
-
-$form = $this->beginWidget('CActiveForm', array(
-    'id' => 'login-form',
-    'enableAjaxValidation' => true,
-));
 ?>
 
-    <h1><?= $this->pageTitle ?></h1>
+    <? $form = $this->beginWidget('CActiveForm', array(
+        'id' => 'login-form',
+        'enableAjaxValidation' => true,
+    ));
+    ?>
+    <h1 class="h1"><?= $this->pageTitle ?></h1>
 
     <div class="form login">
-        <div style="margin-left:75px"><?php echo $form->error($model, 'password'); ?></div>
-
         <? $name = 'email'; ?>
-        <div class="row">
+        <div class="line">
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
                 <?php echo $form->textField($model, $name); ?>
                 <?= CHtml::Link('я еще не зарегистрирован', array('auth/register'), array('class' => 'register')) ?>
-                <div class="hint">например, mail@mail.ru</div>
             </div>
         </div>
 
         <? $name = 'password'; ?>
-        <div class="row">
+        <div class="line">
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
                 <?php echo $form->passwordField($model, $name); ?>
                 <?= CHtml::Link('я не помню пароль', array('auth/restore'), array('class' => 'restore-password')) ?>
-                <div class="hint">не менее 6 символов</div>
+                <?php echo $form->error($model, 'password'); ?>
             </div>
         </div>
 
         <? $name = 'rememberMe'; ?>
-        <div class="row rememberMe">
+        <div class="line rememberMe">
             <?php echo $form->checkBox($model, $name, array('class' => 'styled')); ?>
             <?php echo $form->label($model, $name); ?>
         </div>
         <div class="clear"></div>
 
-        <div class="row button"><?= CHtml::submitButton('Вход', array('class' => 'green-button')); ?></div>
+        <div class="line">
+            <?= CHtml::htmlButton('Вход', array('class' => 'button', 'type' => 'submit')); ?>
+        </div>
 
     </div>
 
-
-<?php $this->endWidget(); ?>
+    <?php $this->endWidget(); ?>

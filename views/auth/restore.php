@@ -1,6 +1,6 @@
 <?php
 /**
- * @var $model User
+ * @var User $model
  */
 
 $form = $this->beginWidget('CActiveForm', array(
@@ -15,18 +15,19 @@ $form = $this->beginWidget('CActiveForm', array(
         <div style="margin-left:75px"><?php echo $form->error($model, 'password'); ?></div>
 
         <? $name = 'email'; ?>
-        <div class="row">
+        <div class="line">
             <?php echo $form->labelEx($model, $name); ?>
             <div class="inline">
                 <?php echo $form->textField($model, $name); ?>
                 <?= CHtml::Link('я еще не зарегистрирован', array('site/register'), array('class' => 'register')) ?>
-                <div class="hint">например, mail@mail.ru</div>
             </div>
         </div>
 
         <div class="clear"></div>
 
-        <div class="row button"><?= CHtml::submitButton('Восстановить', array('class' => 'green-button')); ?></div>
+        <div class="line">
+            <?= CHtml::htmlButton('Восстановить', array('class' => 'button', 'type'=>'submit')); ?>
+        </div>
 
     </div>
 
