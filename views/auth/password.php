@@ -5,48 +5,48 @@
  */
 
 $form = $this->beginWidget('CActiveForm', array(
-	'id' => 'password-form',
-	'enableAjaxValidation' => true,
+    'id' => 'password-form',
+    'enableAjaxValidation' => true,
 ));
 ?>
 
-	<h1><?= $this->pageTitle ?></h1>
+    <div class="container">
+        <div class="form password">
+            <h1 class="h1"><?= $this->pageTitle ?></h1>
+            <?php if (Yii::app()->user->getState('tokenAuth', false) !== true): ?>
+                <? $name = 'oldPassword'; ?>
+                <div class="line">
+                    <?php echo $form->labelEx($model, $name); ?>
+                    <div class="elements">
+                        <?php echo $form->passwordField($model, $name); ?>
+                        <?php echo $form->error($model, $name); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-	<div class="form password">
-		<?php if (Yii::app()->user->getState('tokenAuth', false) !== true): ?>
-			<? $name = 'oldPassword'; ?>
-			<div class="row">
-				<?php echo $form->labelEx($model, $name); ?>
-				<div class="inline">
-					<?php echo $form->passwordField($model, $name); ?>
-					<?php echo $form->error($model, $name); ?>
-				</div>
-			</div>
-		<?php endif; ?>
+            <? $name = 'newPassword'; ?>
+            <div class="line">
+                <?php echo $form->labelEx($model, $name); ?>
+                <div class="elements">
+                    <?php echo $form->passwordField($model, $name); ?>
+                    <?php echo $form->error($model, $name); ?>
+                </div>
+            </div>
 
-		<? $name = 'newPassword'; ?>
-		<div class="line">
-			<?php echo $form->labelEx($model, $name); ?>
-			<div class="inline">
-				<?php echo $form->passwordField($model, $name); ?>
-				<?php echo $form->error($model, $name); ?>
-			</div>
-		</div>
+            <? $name = 'newPasswordRepeat'; ?>
+            <div class="line">
+                <?php echo $form->labelEx($model, $name); ?>
+                <div class="elements">
+                    <?php echo $form->passwordField($model, $name); ?>
+                    <?php echo $form->error($model, $name); ?>
+                </div>
+            </div>
 
-		<? $name = 'newPasswordRepeat'; ?>
-		<div class="line">
-			<?php echo $form->labelEx($model, $name); ?>
-			<div class="inline">
-				<?php echo $form->passwordField($model, $name); ?>
-				<?php echo $form->error($model, $name); ?>
-			</div>
-		</div>
-
-		<div class="row button">
-			<?= CHtml::htmlButton('Изменить пароль', array('class' => 'button', 'type' => 'submit')); ?>
-
-		</div>
-	</div>
+            <div class="line changePassword">
+                <?= CHtml::htmlButton('Изменить пароль', array('class' => 'button', 'type' => 'submit')); ?>
+            </div>
+        </div>
+    </div>
 
 
 <?php $this->endWidget(); ?>

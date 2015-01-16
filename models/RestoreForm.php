@@ -17,8 +17,10 @@ class RestoreForm extends CFormModel {
         );
     }
 
-    public function restorePassword() {
-        $user = UserBase::model()->find('email=:email', array('email' => $this->email));
+    public function restorePassword($className = null) {
+        if($className === null)
+            $className = 'UserBase';
+        $user = $className::model()->find('email=:email', array('email' => $this->email));
         if (is_object($user)) {
             $user->restorePassword();
         }

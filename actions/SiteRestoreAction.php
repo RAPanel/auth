@@ -26,9 +26,9 @@ class SiteRestoreAction extends CAction {
 		if (isset($_POST[get_class($model)])) {
 			$model->setAttributes($_POST[get_class($model)]);
 			if($model->validate()) {
-				$model->restorePassword();
+				$model->restorePassword($this->controller->userClassName);
 				Yii::app()->user->setFlash('info', 'Ссылка для восстановления выслана на Ваш E-mail адрес');
-				$this->controller->redirect(array('auth/login'));
+				$this->controller->redirect(array('/site/index'));
 			}
 		}
 

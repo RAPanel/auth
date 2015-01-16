@@ -10,8 +10,9 @@ class SiteLoginAction extends CAction {
 	public function run($returnTo = null) {
 		$this->controller->pageTitle = 'Вход';
 
-		/** @var UserForm|AuthForm $model */
-		$model = new UserForm('login');
+		/** @var UserBase $model */
+		$className = $this->controller->userClassName;
+		$model = new $className('login');
 
 		if(Yii::app()->user->id)
 			$this->controller->back($returnTo);

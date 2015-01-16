@@ -18,6 +18,7 @@ class AuthController extends RController
 			'class' => 'auth.actions.PasswordAction',
 		),
 	);
+	public $userClassName = 'UserForm';
 
 	public function filters()
 	{
