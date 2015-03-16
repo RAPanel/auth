@@ -45,6 +45,8 @@
     <div class="line">
         <?= CHtml::htmlButton('Регистрация', array('class' => 'button', 'type' => 'submit')); ?>
     </div>
+
+    <div class="clearfix"></div>
 </div>
 
 <?php $this->endWidget(); ?>
