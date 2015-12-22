@@ -26,7 +26,8 @@ class PasswordAction extends CAction {
                 }
                 if($returnTo === null)
                     $returnTo = array('/site/index');
-                $this->controller->redirect($returnTo);
+                if($returnTo)
+                    $this->controller->redirect($returnTo);
             }
         }
         $this->controller->render('password', compact('model'));

@@ -32,11 +32,19 @@ class VkLoginAction extends CAction
 			$user = $this->registerUser($authData);
 		} else {
 			$userData = $this->getUserData($authData['user_id']);
-			$user->name = $userData['screen_name'];
+            $user->vk = $userData['screen_name'];
+            if(!$user->name) $user->name = $userData['first_name'];
+            if(!$user->surname) $user->surname = $userData['last_name'];
+            if(empty($user->photo->id) && $userData['photo_max_orig']){
+                $photo = new Photo();
+                $photo->setAttributes($photo::savePhoto($userData['photo_max_orig']));
+                $photo->save();
+            }
 			$user->apiToken = $authData['access_token'];
 			$user->saveSettings();
 		}
 		$user->apiLogin($authData['access_token']);
+        Yii::app()->user->setFlash('login', true);
 		$this->controller->back();
 	}
 
@@ -44,9 +52,16 @@ class VkLoginAction extends CAction
 		$userData = $this->getUserData($authData['user_id']);
 		$user = new UserForm('register');
 		$user->email = $authData['email'];
-		$user->name = $userData['screen_name'];
+		$user->vk = $userData['screen_name'];
+		$user->name = $userData['first_name'];
+		$user->surname = $userData['last_name'];
 		$user->username = $userData['first_name'] . ' ' . $userData['last_name'];
 		$user->password = $user->password_repeat = md5($authData['access_token']);
+        if($userData['photo_max_orig']){
+            $photo = new Photo();
+            $photo->setAttributes($photo::savePhoto($userData['photo_max_orig']));
+            $photo->save();
+        }
 		$user->apiToken = $authData['access_token'];
 		$user->save(false);
 		$user->saveSettings();
@@ -87,7 +102,7 @@ class VkLoginAction extends CAction
 		$result = $this->getApiResult(self::API_URL . 'method/users.get', array(
 			'user_ids' => $vkUserId,
 			'client_secret' => $this->secretKey,
-			'fields' => 'screen_name',
+			'fields' => 'screen_name,photo_max_orig',
 		));
 		if(isset($result['response'][0]))
 			return $result['response'][0];

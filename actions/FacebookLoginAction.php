@@ -36,11 +36,19 @@ class FacebookLoginAction extends CAction
 		if($userData === false)
 			$this->controller->back($redirect);
 		$email = $userData['email'];
-		$user = User::model()->findByAttributes(array('email' => $email));
-		if(is_null($user)) {
+		if($email) $user = User::model()->findByAttributes(array('email' => $email));
+		if(!isset($user) || is_null($user)) {
 			$user = $this->registerUser($accessToken, $userData);
 		} else {
-			$user->name = $userData['name'];
+            if(!$user->name) $user->name = $userData['first_name'];
+            if(!$user->surname) $user->surname = $userData['last_name'];
+            if(empty($user->photo->id)){
+                $photo = new Photo();
+                $photo->setAttributes($photo::savePhoto('http://graph.facebook.com/'.$userData['id'].'/picture?height=1000&type=normal&width=1000'));
+                $photo->save();
+            }
+//			$user->name = $userData['name'];
+            if(!$user->email && $email) $user->email = $email;
 			$user->apiToken = md5($accessToken);
 			if(!$user->role)
 				$user->role = 'user';
@@ -48,6 +56,7 @@ class FacebookLoginAction extends CAction
 		}
 		$user->apiLogin(md5($accessToken));
 		Yii::app()->user->setState('facebookRedirect', false);
+        Yii::app()->user->setFlash('login', true);
 		$this->controller->back($redirect);
 	}
 
@@ -68,12 +77,19 @@ class FacebookLoginAction extends CAction
 	}
 
 	public function registerUser($accessToken, $userData) {
-		$user = new UserForm('register');
-		$user->email = $userData['email'];
-		$user->name = $userData['id'];
-		$user->username = $userData['first_name'] . ' ' . $userData['last_name'];
+        $user = new UserForm('register');
+        $user->email = $userData['email'];
+        $user->fb = $userData['url'];
+        $user->name = $userData['first_name'];
+        $user->surname = $userData['last_name'];
+        $user->username = $userData['first_name'] . ' ' . $userData['last_name'];
 		$user->password = $user->password_repeat = md5($accessToken);
-		$user->apiToken = md5($accessToken);
+        if($photo = 'http://graph.facebook.com/'.$userData['id'].'/picture?height=1000&type=normal&width=1000'){
+            $photo = new Photo();
+            $photo->setAttributes($photo::savePhoto($photo));
+            $photo->save();
+        }
+		$user->apiToken = $accessToken;
 		$user->role = 'user';
 		$user->save(false);
 		$user->saveSettings();
